@@ -4,7 +4,6 @@ using System.Linq;
 using System.Web;
 using System.Data.Entity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using Fluent.Infrastructure.FluentModel;
 
 namespace Vidly.Models
 {
