@@ -36,6 +36,7 @@ namespace Vidly.Controllers.Api
             return Ok(Mapper.Map<Movie, MovieDto>(movie));
         }
 
+        [Authorize(Roles = RoleName.CanManageMovies)]
         [HttpPost]
         public IHttpActionResult CreateMovie(MovieDto movieDto)
         {
@@ -50,6 +51,7 @@ namespace Vidly.Controllers.Api
             return Created(new Uri(Request.RequestUri + "/" + movieDto.Id), movieDto);
         }
 
+        [Authorize(Roles = RoleName.CanManageMovies)]
         [HttpPut]
         public IHttpActionResult UpdateMovie(MovieDto movieDto, int id)
         {
@@ -67,6 +69,7 @@ namespace Vidly.Controllers.Api
             return Ok();
         }
 
+        [Authorize(Roles = RoleName.CanManageMovies)]
         [HttpDelete]
         public IHttpActionResult DeleteMovie(int id)
         {
