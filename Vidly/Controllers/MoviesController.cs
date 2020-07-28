@@ -25,8 +25,8 @@ namespace Vidly.Controllers
         }
         public ActionResult Index()
         {
-            if(User.IsInRole(RoleName.CanManageMovies))
-              return View("List");
+            if (User.IsInRole(RoleName.CanManageMovies))
+                return View("List");
 
             return View("ReadOnlyList");
         }
@@ -57,8 +57,8 @@ namespace Vidly.Controllers
             return View(viewModel);
         }
 
-        [Authorize(Roles= RoleName.CanManageMovies)]
-        public ActionResult New()
+        [Authorize(Roles = RoleName.CanManageMovies)]
+        public ViewResult New()
         {
             var genres = _context.Genres.ToList();
 
@@ -91,7 +91,7 @@ namespace Vidly.Controllers
         [Authorize(Roles = RoleName.CanManageMovies)]
         public ActionResult Save(Movie movie)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 var viewModel = new MovieFormViewModel(movie)
                 {
@@ -103,29 +103,21 @@ namespace Vidly.Controllers
 
             if (movie.Id == 0)
             {
-                _context.Movies.Add(movie);
                 movie.DateAdded = DateTime.Now;
+                movie.NumberAvailable = movie.NumberInStock;
+                _context.Movies.Add(movie);
             }
             else
             {
                 var movieInDb = _context.Movies.Single(m => m.Id == movie.Id);
-
                 movieInDb.Name = movie.Name;
-                movieInDb.ReleaseDate = movie.ReleaseDate;
                 movieInDb.GenreId = movie.GenreId;
                 movieInDb.NumberInStock = movie.NumberInStock;
+                movieInDb.ReleaseDate = movie.ReleaseDate;
             }
 
-            try
-            {
-                _context.SaveChanges();
+            _context.SaveChanges();
 
-            }
-            catch (DbEntityValidationException e)
-            {
-
-                Console.WriteLine(e); 
-            }
             return RedirectToAction("Index", "Movies");
         }
     }

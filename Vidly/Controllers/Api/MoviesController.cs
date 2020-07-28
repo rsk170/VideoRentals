@@ -20,9 +20,19 @@ namespace Vidly.Controllers.Api
             _context = new ApplicationDbContext();
         }
 
-        public IHttpActionResult GetMovies()
+        public IHttpActionResult GetMovies(string query = null)
         {
-            var movieDtos = _context.Movies.Include(m => m.Genre).ToList().Select(Mapper.Map<Movie, MovieDto>);
+            var moviesQuery = _context.Movies
+                .Include(m => m.Genre)
+                .Where(m => m.NumberAvailable > 0);
+
+            if (!String.IsNullOrWhiteSpace(query))
+            {
+                moviesQuery = moviesQuery.Where(c => c.Name.Contains(query));
+            }
+
+            var movieDtos = moviesQuery.ToList().Select(Mapper.Map<Movie, MovieDto>);
+
             return Ok(movieDtos);
         }
 
@@ -36,8 +46,9 @@ namespace Vidly.Controllers.Api
             return Ok(Mapper.Map<Movie, MovieDto>(movie));
         }
 
-        [Authorize(Roles = RoleName.CanManageMovies)]
+        
         [HttpPost]
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public IHttpActionResult CreateMovie(MovieDto movieDto)
         {
             if (!ModelState.IsValid)
@@ -48,11 +59,11 @@ namespace Vidly.Controllers.Api
             _context.SaveChanges();
 
             movieDto.Id = movie.Id;
-            return Created(new Uri(Request.RequestUri + "/" + movieDto.Id), movieDto);
+            return Created(new Uri(Request.RequestUri + "/" + movie.Id), movieDto);
         }
 
-        [Authorize(Roles = RoleName.CanManageMovies)]
         [HttpPut]
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public IHttpActionResult UpdateMovie(MovieDto movieDto, int id)
         {
             if (!ModelState.IsValid)
@@ -69,8 +80,8 @@ namespace Vidly.Controllers.Api
             return Ok();
         }
 
-        [Authorize(Roles = RoleName.CanManageMovies)]
         [HttpDelete]
+        [Authorize(Roles = RoleName.CanManageMovies)]
         public IHttpActionResult DeleteMovie(int id)
         {
             var movieInDb = _context.Movies.SingleOrDefault(m => m.Id == id);
