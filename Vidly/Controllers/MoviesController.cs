@@ -5,6 +5,7 @@ using System.Data.Entity.Validation;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Vidly.Entities.Models;
 using Vidly.Models;
 using Vidly.ViewModels;
 

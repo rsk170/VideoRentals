@@ -1,11 +1,14 @@
-﻿using System;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Vidly.Entities.Models;
 using Vidly.Models;
 using Vidly.ViewModels;
+
 
 namespace Vidly.Controllers
 {
@@ -25,41 +28,34 @@ namespace Vidly.Controllers
 
         public ActionResult New()
         {
-            var membershipTypes = _context.MembershipTypes.ToList();
-            var viewModel = new CustomerFormViewModel
-            {
-                Customer = new Customer(),
-                MembershipTypes = membershipTypes
-            };
+            var model = new CustomerViewModel();
 
-            return View("CustomerForm", viewModel);
+            InitializeModel(model);
+
+            return View("CustomerForm", model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Save(Customer customer)
+        public ActionResult Save(CustomerViewModel model)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var viewModel = new CustomerFormViewModel
-                { 
-                    Customer = customer,
-                    MembershipTypes = _context.MembershipTypes.ToList()
-                };
-
-                return View("CustomerForm", viewModel);
+                InitializeModel(model);
+                return View("CustomerForm", model);
             }
 
-            if(customer.Id == 0)
-              _context.Customers.Add(customer);
+            Customer customer;
+            if (model.Id == 0)
+            {
+                customer = new Customer();
+                Mapper.Map(model, customer);
+                _context.Customers.Add(customer);
+            }
             else
             {
-                var customerInDb = _context.Customers.Single(c => c.Id == customer.Id);
-
-                customerInDb.Name = customer.Name;
-                customerInDb.Birthdate = customer.Birthdate;
-                customerInDb.MembershipTypeId = customer.MembershipTypeId;
-                customer.IsSubscribedToNewsLetter = customer.IsSubscribedToNewsLetter;
+                customer = _context.Customers.Single(c => c.Id == model.Id);
+                Mapper.Map(model, customer);
             }
 
             _context.SaveChanges();
@@ -72,15 +68,6 @@ namespace Vidly.Controllers
             return View();
         }
 
-        public ActionResult Details(int id)
-        {
-            var customer = _context.Customers.Include(c => c.MembershipType).SingleOrDefault(c => c.Id == id);
-            if (customer == null)
-                return HttpNotFound();
-
-            return View(customer);
-        }
-
         public ActionResult Edit(int id)
         {
             var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
@@ -88,13 +75,15 @@ namespace Vidly.Controllers
             if (customer == null)
                 return HttpNotFound();
 
-            var viewModel = new CustomerFormViewModel
-            {
-                Customer = customer,
-                MembershipTypes = _context.MembershipTypes.ToList()
-            };
+            var model = Mapper.Map<Customer, CustomerViewModel>(customer);
+            InitializeModel(model);
 
-            return View("CustomerForm", viewModel);
+            return View("CustomerForm", model);
+        }
+
+        private void InitializeModel(CustomerViewModel model)
+        {
+            model.MembershipTypes = _context.MembershipTypes.ToList();
         }
     }
 }

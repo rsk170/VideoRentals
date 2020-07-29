@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Http;
 using Vidly.Models;
 using Vidly.Dtos;
+using Vidly.Entities.Models;
 
 namespace Vidly.Controllers.Api
 {

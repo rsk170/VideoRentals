@@ -3,25 +3,23 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
-using Vidly.Models;
 
-namespace Vidly.Dtos
+namespace Vidly.Entities.Models
 {
-    public class CustomerDto
+    public class Customer
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Please enter customer's name")]
+        [Required]
         [StringLength(255)]
         public string Name { get; set; }
 
         public bool IsSubscribedToNewsLetter { get; set; }
 
+        public MembershipType MembershipType { get; set; }
+
         public byte MembershipTypeId { get; set; }
 
-        public MembershipTypeDto MembershipType { get; set; }
-
         public DateTime? Birthdate { get; set; }
-
     }
 }
