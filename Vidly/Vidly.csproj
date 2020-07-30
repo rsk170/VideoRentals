@@ -691,7 +691,6 @@
     <Content Include="Views\Customers\Details.cshtml" />
     <Content Include="Views\Customers\Index.cshtml" />
     <Content Include="Views\Movies\List.cshtml" />
-    <Content Include="Views\Movies\Random.cshtml" />
     <Content Include="Views\Shared\_NavBar.cshtml" />
     <Content Include="Views\Movies\Details.cshtml" />
     <Content Include="Views\Customers\CustomerForm.cshtml" />
@@ -745,6 +744,10 @@
     <ProjectReference Include="..\Vidly.Entities\Vidly.Entities.csproj">
       <Project>{178d712a-ce59-40ca-ba74-a042c1d9209d}</Project>
       <Name>Vidly.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Vidly.Services\Vidly.Services.csproj">
+      <Project>{f2ac5024-bac7-4c1d-af92-80330359b8da}</Project>
+      <Name>Vidly.Services</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

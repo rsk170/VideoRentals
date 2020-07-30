@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vidly", "Vidly\Vidly.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vidly.Entities", "Vidly.Entities\Vidly.Entities.csproj", "{178D712A-CE59-40CA-BA74-A042C1D9209D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vidly.Services", "Vidly.Services\Vidly.Services.csproj", "{F2AC5024-BAC7-4C1D-AF92-80330359B8DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{178D712A-CE59-40CA-BA74-A042C1D9209D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{178D712A-CE59-40CA-BA74-A042C1D9209D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{178D712A-CE59-40CA-BA74-A042C1D9209D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F2AC5024-BAC7-4C1D-AF92-80330359B8DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2AC5024-BAC7-4C1D-AF92-80330359B8DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2AC5024-BAC7-4C1D-AF92-80330359B8DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2AC5024-BAC7-4C1D-AF92-80330359B8DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -25,6 +25,15 @@ namespace Vidly.Controllers
         {
             _context.Dispose();
         }
+        private Customer GetCustomer(int id)
+        {
+            return _context.Customers.Single(c => c.Id == id);
+        }
+
+        private void InitializeModel(CustomerViewModel model)
+        {
+            model.MembershipTypes = _context.MembershipTypes.ToList();
+        }
 
         public ActionResult New()
         {
@@ -45,6 +54,13 @@ namespace Vidly.Controllers
                 return View("CustomerForm", model);
             }
 
+            SaveCustomer(model);
+
+            return RedirectToAction("Index", "Customers");
+        }
+
+        private void SaveCustomer(CustomerViewModel model)
+        {
             Customer customer;
             if (model.Id == 0)
             {
@@ -54,13 +70,11 @@ namespace Vidly.Controllers
             }
             else
             {
-                customer = _context.Customers.Single(c => c.Id == model.Id);
+                customer = GetCustomer(model.Id);
                 Mapper.Map(model, customer);
             }
 
             _context.SaveChanges();
-
-            return RedirectToAction("Index", "Customers");
         }
 
         public ActionResult Index()
@@ -70,7 +84,7 @@ namespace Vidly.Controllers
 
         public ActionResult Edit(int id)
         {
-            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
+            Customer customer = GetCustomer(id);
 
             if (customer == null)
                 return HttpNotFound();
@@ -79,11 +93,6 @@ namespace Vidly.Controllers
             InitializeModel(model);
 
             return View("CustomerForm", model);
-        }
-
-        private void InitializeModel(CustomerViewModel model)
-        {
-            model.MembershipTypes = _context.MembershipTypes.ToList();
         }
     }
 }
