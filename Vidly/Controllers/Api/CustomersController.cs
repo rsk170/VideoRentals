@@ -9,6 +9,8 @@ using System.Web.Http;
 using Vidly.Dtos;
 using Vidly.Models;
 using Vidly.Entities.Models;
+using Vidly.Services;
+using Vidly.Services.Dto;
 
 namespace Vidly.Controllers.Api
 {
@@ -16,34 +18,25 @@ namespace Vidly.Controllers.Api
     {
         private ApplicationDbContext _context;
 
+        private CustomersService _customers;
+
         public CustomersController()
         {
             _context = new ApplicationDbContext();
+            _customers = new CustomersService(_context);
         }
 
         //GET /api/customers
         public IHttpActionResult GetCustomers(string query = null)
         {
-            var customersQuery = _context.Customers
-                .Include(c => c.MembershipType);
-
-            if(!String.IsNullOrWhiteSpace(query))
-            {
-                customersQuery = customersQuery.Where(
-                    c => c.Name.Contains(query));
-            }
-
-            var customerDtos = customersQuery
-                .ToList()
-                .Select(Mapper.Map<Customer, CustomerDto>);
-
-            return Ok(customerDtos);
+            var items = _customers.GetAllCustomers(query);
+            return Ok(items);
         }
 
         //GET /api/customers/1
         public IHttpActionResult GetCustomer(int id)
         {
-            var customer = _context.Customers.SingleOrDefault(c => c.Id == id);
+            var customer = _customers.GetCustomer(id);
 
             if (customer == null)
                 return NotFound();
@@ -74,7 +67,7 @@ namespace Vidly.Controllers.Api
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var customerInDb = _context.Customers.SingleOrDefault(c => c.Id == id);
+            var customerInDb = _customers.GetCustomer(id);
 
             if (customerInDb == null)
                 return NotFound();
@@ -89,7 +82,7 @@ namespace Vidly.Controllers.Api
         [HttpDelete]
         public IHttpActionResult DeleteCustomer(int id)
         {
-            var customerInDb = _context.Customers.SingleOrDefault(c => c.Id == id);
+            var customerInDb = _customers.GetCustomer(id);
 
             if (customerInDb == null)
                 NotFound();

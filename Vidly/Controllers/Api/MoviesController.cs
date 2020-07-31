@@ -9,6 +9,7 @@ using System.Web.Http;
 using Vidly.Dtos;
 using Vidly.Entities.Models;
 using Vidly.Models;
+using Vidly.Services;
 
 namespace Vidly.Controllers.Api
 {
@@ -16,16 +17,17 @@ namespace Vidly.Controllers.Api
     {
         private ApplicationDbContext _context;
 
+        private MoviesService _movies;
+
         public MoviesController()
         {
             _context = new ApplicationDbContext();
+            _movies = new MoviesService(_context);
         }
 
         public IHttpActionResult GetMovies(string query = null)
         {
-            var moviesQuery = _context.Movies
-                .Include(m => m.Genre)
-                .Where(m => m.NumberAvailable > 0);
+            IQueryable<Movie> moviesQuery = _movies.GetAllMovies();
 
             if (!String.IsNullOrWhiteSpace(query))
             {
@@ -39,7 +41,7 @@ namespace Vidly.Controllers.Api
 
         public IHttpActionResult GetMovie(int id)
         {
-            var movie = _context.Movies.SingleOrDefault(m => m.Id == id);
+            var movie = _movies.GetMovie(id);
 
             if (movie == null)
                 return NotFound();
@@ -70,7 +72,7 @@ namespace Vidly.Controllers.Api
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var movieInDb = _context.Movies.SingleOrDefault(m => m.Id == id);
+            var movieInDb = _movies.GetMovie(id);
 
             if (movieInDb == null)
                 return NotFound();
@@ -85,7 +87,7 @@ namespace Vidly.Controllers.Api
         [Authorize(Roles = RoleName.CanManageMovies)]
         public IHttpActionResult DeleteMovie(int id)
         {
-            var movieInDb = _context.Movies.SingleOrDefault(m => m.Id == id);
+            var movieInDb = _movies.GetMovie(id);
 
             if (movieInDb == null)
                 return NotFound();

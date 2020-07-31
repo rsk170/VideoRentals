@@ -1,14 +1,10 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Vidly.Entities.Models;
 using Vidly.Models;
 using Vidly.ViewModels;
-
+using Vidly.Services;
+using Vidly.Services.Dto;
 
 namespace Vidly.Controllers
 {
@@ -16,23 +12,22 @@ namespace Vidly.Controllers
     {
         private ApplicationDbContext _context;
 
+        private CustomersService _customers;
+
         public CustomersController()
         {
             _context = new ApplicationDbContext();
+            _customers = new CustomersService(_context);
         }
 
         protected override void Dispose(bool disposing)
         {
             _context.Dispose();
         }
-        private Customer GetCustomer(int id)
-        {
-            return _context.Customers.Single(c => c.Id == id);
-        }
 
-        private void InitializeModel(CustomerViewModel model)
+        public void InitializeModel(CustomerViewModel model)
         {
-            model.MembershipTypes = _context.MembershipTypes.ToList();
+            model.MembershipTypes = _customers.GetMembershipTypes();
         }
 
         public ActionResult New()
@@ -54,27 +49,11 @@ namespace Vidly.Controllers
                 return View("CustomerForm", model);
             }
 
-            SaveCustomer(model);
+            var dto = Mapper.Map<CustomerViewModel, CustomerDto>(model);
+
+            _customers.SaveCustomer(dto);
 
             return RedirectToAction("Index", "Customers");
-        }
-
-        private void SaveCustomer(CustomerViewModel model)
-        {
-            Customer customer;
-            if (model.Id == 0)
-            {
-                customer = new Customer();
-                Mapper.Map(model, customer);
-                _context.Customers.Add(customer);
-            }
-            else
-            {
-                customer = GetCustomer(model.Id);
-                Mapper.Map(model, customer);
-            }
-
-            _context.SaveChanges();
         }
 
         public ActionResult Index()
@@ -84,7 +63,7 @@ namespace Vidly.Controllers
 
         public ActionResult Edit(int id)
         {
-            Customer customer = GetCustomer(id);
+            Customer customer = _customers.GetCustomer(id);
 
             if (customer == null)
                 return HttpNotFound();

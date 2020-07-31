@@ -14,6 +14,7 @@ namespace Vidly.Controllers
     public class MoviesController : Controller
     {
         private MoviesService _movies;
+
         private ApplicationDbContext _context;
 
         public MoviesController()

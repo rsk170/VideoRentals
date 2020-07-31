@@ -47,5 +47,12 @@ namespace Vidly.Services
 
             _context.SaveChanges();
         }
+
+        public IQueryable<Movie> GetAllMovies()
+        {
+            return _context.Movies
+                .Include(m => m.Genre)
+                .Where(m => m.NumberAvailable > 0);
+        }
     }
 }
